@@ -20,7 +20,7 @@
     "dotenv": "^17.0.0",
     "express": "^5.1.0",
     "inngest": "^3.39.2",
-    "mime-types": "^3.0.1",
+    "mime-types": "^2.1.35",
     "mongoose": "^8.16.1"
   },
   "devDependencies": {
