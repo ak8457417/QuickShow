@@ -82,6 +82,7 @@ export const createBooking = async (req, res) => {
         })
 
         booking.paymentLink = session.url
+        booking.isPaid = true
         await booking.save()
 
         res.json({success: true, message: "booking successfully created!", url: session.url})

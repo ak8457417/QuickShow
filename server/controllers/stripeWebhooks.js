@@ -2,7 +2,7 @@ import stripe from "stripe";
 import Booking from "../models/Booking.js";
 
 export const stripeWebhooks = async (request, response)=>{
-    const stripeInstance = new stripe(process.env. STRIPE_SECRET_KEY);
+    const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
     const sig = request.headers["stripe-signature"];
 
     let event;
@@ -15,7 +15,7 @@ export const stripeWebhooks = async (request, response)=>{
 
     try {
         switch (event.type) {
-            case "payment_intent. succeeded": {
+            case "payment_intent.completed": {
                 const paymentIntent = event.data.object;
                 const sessionList = await stripeInstance.checkout.sessions.list({
                     payment_intent: paymentIntent.id
