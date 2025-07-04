@@ -4,22 +4,42 @@ import Loading from "../components/Loading.jsx";
 import BlurCircle from "../components/BlurCircle.jsx";
 import timeFormat from "../lib/timeFormat.js";
 import {dateFormat} from "../lib/dateFormat.js";
+import {useAppContext} from "../context/AppContext.jsx";
 
 const MyBookings = () => {
 
     const currency = import.meta.env.VITE_CURRENCY;
 
+    const {shows, axios, image_base_url, favoriteMovies, fetchFavoriteMovies, user, getToken} = useAppContext()
+
     const [bookings, setBookings] = useState([])
     const [loading, setLoading] = useState(true)
 
     const getMyBookings = async () => {
-        setBookings(dummyBookingData)
+        // setBookings(dummyBookingData)
+        // setLoading(false)
+        try {
+            const { data } = await axios.get(`/api/user/bookings?userId=${user.id}`,
+                {headers: {Authorization: `Bearer ${await getToken()}`}
+            });
+
+            console.log(data)
+
+            if (data.success) {
+                setBookings(data.bookings);
+            }
+
+        } catch (e) {
+            console.log(e)
+        }
         setLoading(false)
     }
 
     useEffect(() => {
-        getMyBookings()
-    }, [])
+        if (user) {
+            getMyBookings()
+        }
+    }, [user])
 
     return !loading ? (
         <div className={'relative px-6 md:px-16 lg:px-40 pt-30 md:pt-40 min-h-[80vh]'}>
@@ -37,7 +57,7 @@ const MyBookings = () => {
                     >
                         <div className={'flex flex-col md:flex-row'}>
                             <img
-                                src={item.show.movie.poster_path}
+                                src={image_base_url + item.show.movie.poster_path}
                                 className={'md:w-45 aspect-video h-auto object-cover object-bottom rounded'}
                             />
                             <div className={'flex flex-col p-4'}>

@@ -3,8 +3,11 @@ import {dummyBookingData} from "../../assets/assets.js";
 import Loading from "../../components/Loading.jsx";
 import Title from "../../components/admin/Title.jsx";
 import {dateFormat} from "../../lib/dateFormat.js";
+import {useAppContext} from "../../context/AppContext.jsx";
 
 const ListBookings = () => {
+
+    const {axios, getToken, user, image_base_url} = useAppContext()
 
     const currency = import.meta.env.VITE_CURRENCY;
 
@@ -12,8 +15,18 @@ const ListBookings = () => {
     const [loading, setLoading] = useState(true);
 
     const getAllBookings = async () => {
-        setBookings(dummyBookingData);
-        setLoading(false);
+        // setBookings(dummyBookingData);
+        try {
+            const {data} = await axios.get('/api/admin/all-bookings', {
+                headers: {Authorization: `Bearer ${await getToken()}`}
+            })
+
+            setBookings(data.bookings)
+
+        } catch (e) {
+            console.log(e)
+        }
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -36,14 +49,16 @@ const ListBookings = () => {
                     </thead>
                     <tbody className={'text-sm font-light'}>
                     {
-                        bookings.map((booking, index) => (
-                            <tr key={index} className={'border-b border-primary/10 bg-primary/5 even:bg-primary/10'}>
-                                <td className={'p-2 min-w-45 pl-5'}>{booking.user.name}</td>
-                                <td className={'p-2 min-w-45 pl-5'}>{booking.show.movie.title}</td>
-                                <td className={'p-2'}>{dateFormat(booking.show.showDateTime)}</td>
-                                <td className={'p-2'}>{Object.keys(booking.bookedSeats).map(seat => booking.bookedSeats[seat]).join(', ')}</td>
-                                <td className={'p-2'}>{currency}{booking.amount}</td>
-                            </tr>
+                        bookings.map((booking, index) => ( booking.user &&
+                            <>
+                                <tr key={index} className={'border-b border-primary/10 bg-primary/5 even:bg-primary/10'}>
+                                    <td className={'p-2 min-w-45 pl-5'}>{booking.user.name}</td>
+                                    <td className={'p-2 min-w-45 pl-5'}>{booking.show.movie.title}</td>
+                                    <td className={'p-2'}>{dateFormat(booking.show.showDateTime)}</td>
+                                    <td className={'p-2'}>{Object.keys(booking.bookedSeats).map(seat => booking.bookedSeats[seat]).join(', ')}</td>
+                                    <td className={'p-2'}>{currency}{booking.amount}</td>
+                                </tr>
+                            </>
                         ))
                     }
                     </tbody>

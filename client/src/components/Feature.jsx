@@ -4,17 +4,23 @@ import {useNavigate} from "react-router-dom";
 import BlurCircle from "./BlurCircle.jsx";
 import {dummyShowsData} from "../assets/assets.js";
 import MovieCard from "./MovieCard.jsx";
+import {useAppContext} from "../context/AppContext.jsx";
 
 const Feature = () => {
 
     const navigate = useNavigate();
+
+    const {shows, } = useAppContext()
 
     return (
         <div className={'px-6 md:px-16 lg:px-24 xl:px-44 overflow-hidden'}>
             <div className={'relative flex items-center justify-between pt-20 pb-20'}>
                 <BlurCircle top={'0'} right={'-80px'}/>
                 <p className={'text-lg text-gray-300 font-medium'}>Now Showing</p>
-                <button onClick={() => navigate('/movies')} className={'group flex items-center gap-2 text-sm text-gray-300 cursor-pointer'}>
+                <button onClick={() => {
+                    navigate('/movies');
+                    scrollTo(0, 0)
+                }} className={'group flex items-center gap-2 text-sm text-gray-300 cursor-pointer'}>
                     View All
                     <ArrowRight className={'group-hover:translate-x-0.5 transition w-4.5 h-4.5'} />
                 </button>
@@ -22,7 +28,7 @@ const Feature = () => {
 
             <div className={'flex flex-wrap max-sm:justify-center gap-6 mt-8'}>
                 {
-                    dummyShowsData.slice(0,4).map((show) => (
+                    shows.slice(0,4).map((show) => (
                         <MovieCard key={show._id} movie={show} />
                     ))
                 }
